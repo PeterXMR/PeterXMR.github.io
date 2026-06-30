@@ -3,155 +3,166 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>peter@github:~$ ls ~/projects</title>
-  <meta name="description" content="Hobby projects by PeterXMR — Rust, mobile, and crypto tooling." />
+  <title>peter@github: ~</title>
+  <meta name="description" content="Hobby projects by PeterXMR — Rust, mobile, and on-device tooling." />
   <style>
     :root {
-      --bg: #0a0a0a;
+      --desktop: #000;
+      --screen: #0a0a0a;
       --fg: #00ff41;
       --dim: #1f8a36;
       --muted: #0f5d24;
       --accent: #7dffa0;
-      --border: #123d1c;
+      --border: #15401f;
+      --bar: #111;
     }
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: var(--bg); }
+    html, body { margin: 0; padding: 0; height: 100%; background: var(--desktop); }
     body {
-      color: var(--fg);
       font-family: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
       font-size: 15px;
-      line-height: 1.6;
-      padding: 2rem 2.5rem 4rem;
-      max-width: 1280px;
-      margin: 0 auto;
-      text-shadow: 0 0 2px rgba(0, 255, 65, 0.35);
+      line-height: 1.55;
+      padding: 1.4rem;
+      min-height: 100vh;
     }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .prompt { color: var(--dim); }
-    .prompt::before { content: "peter@github:~$ "; color: var(--muted); }
-    .cmd { color: var(--fg); }
-    .comment { color: var(--muted); }
 
-    header { margin-bottom: 2.5rem; }
-    h1 {
-      font-size: 1.05rem;
-      font-weight: normal;
-      margin: 0.4rem 0 0;
-      color: var(--fg);
-      white-space: pre;
-    }
-    .intro { margin: 0.8rem 0 0; color: var(--dim); }
-
-    .section-label { margin: 2.4rem 0 1rem; }
-
-    .projects {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 1.1rem;
-    }
-    .project {
+    /* terminal window */
+    .terminal {
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1rem 1.2rem;
-      margin: 0;
-      background: rgba(0, 255, 65, 0.02);
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: calc(100vh - 2.8rem);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 40px rgba(0, 255, 65, 0.06);
     }
-    .project:hover { border-color: var(--dim); }
-    .project h2 {
-      font-size: 1rem;
-      margin: 0 0 0.5rem;
-      font-weight: normal;
+    .titlebar {
+      background: var(--bar);
+      border-bottom: 1px solid var(--border);
+      padding: 0.55rem 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
     }
-    .project h2 .dir { color: var(--accent); }
-    .tags { color: var(--muted); font-size: 0.82rem; }
-    .desc { color: var(--dim); margin: 0.55rem 0 0.8rem; }
-    .links a { margin-right: 1.1rem; font-size: 0.88rem; }
-    .links a::before { content: "["; color: var(--muted); }
-    .links a::after { content: "]"; color: var(--muted); }
+    .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+    .titlebar .title {
+      flex: 1;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-right: 2.4rem; /* balance the dots so title is centered */
+    }
 
-    footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; }
+    .screen {
+      background: var(--screen);
+      color: var(--fg);
+      flex: 1;
+      padding: 1.3rem 1.5rem 2.2rem;
+      text-shadow: 0 0 2px rgba(0, 255, 65, 0.3);
+    }
+
+    /* a command line: prompt prefix + typed command */
+    .line { white-space: pre-wrap; }
+    .line .p { color: var(--muted); }      /* user@host:path$ */
+    .line .c { color: var(--fg); }          /* the typed command */
+
+    /* command output: indented under nothing — flush left like a real shell */
+    .out { color: var(--dim); margin: 0.15rem 0 0; white-space: pre-wrap; }
+    .out.tags { color: var(--muted); font-size: 0.86rem; margin-top: 0.35rem; }
+    .out.name { color: var(--fg); }
+    .block { margin: 0 0 1.9rem; }
+    .block:last-of-type { margin-bottom: 0.6rem; }
+    .gap { height: 1.6rem; }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    a:hover { background: var(--accent); color: #04210d; text-decoration: none; }
+    .link { margin-top: 0.4rem; }
+    .link .arrow { color: var(--muted); }
+
     .cursor {
       display: inline-block;
-      width: 0.6em;
+      width: 0.55em;
       height: 1.05em;
       background: var(--fg);
       vertical-align: text-bottom;
+      margin-left: 1px;
       animation: blink 1s steps(2, start) infinite;
       box-shadow: 0 0 6px rgba(0, 255, 65, 0.7);
     }
     @keyframes blink { to { visibility: hidden; } }
-
-    @media (prefers-reduced-motion: reduce) {
-      .cursor { animation: none; }
-    }
+    @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
   </style>
 </head>
 <body>
-  <header>
-    <div class="prompt"><span class="cmd">whoami</span></div>
-    <h1>PeterXMR</h1>
-    <p class="intro">Freedom lover who loves to write code.</p>
-  </header>
-
-  <main>
-    <div class="prompt section-label"><span class="cmd">ls ~/projects</span></div>
-
-    <div class="projects">
-    <article class="project">
-      <h2><span class="dir">./</span>rustscreen</h2>
-      <div class="tags"># rust · macos · android · usb-c</div>
-      <p class="desc">Turns a Google Pixel 6a into a wired USB-C, touch-capable second
-        monitor for an M1 MacBook — both halves written in Rust. The Mac hardware-encodes
-        a virtual display to H.264, streams it over a single cable, and the phone decodes
-        it; touches travel back as mouse events. ~34 ms glass-to-glass latency.</p>
-      <div class="links">
-        <a href="https://github.com/PeterXMR/rustscreen">repo</a>
-      </div>
-    </article>
-
-    <article class="project">
-      <h2><span class="dir">./</span>freellmapiphone</h2>
-      <div class="tags"># react-native · expo · llm · android</div>
-      <p class="desc">An Android app (React Native / Expo) that runs an OpenAI-compatible
-        multi-provider LLM router <em>in-process on the device</em> — no server. Add your
-        free-tier provider keys and it routes requests and fails over across providers,
-        with keys stored in the Android Keystore.</p>
-      <div class="links">
-        <a href="https://github.com/PeterXMR/freellmapiphone">repo</a>
-      </div>
-    </article>
-
-    <article class="project">
-      <h2><span class="dir">./</span>vexlconverter</h2>
-      <div class="tags"># python · react · postgres · crypto</div>
-      <p class="desc">A fiat &amp; cryptocurrency conversion platform with live prices,
-        historical charts, and user-configurable price alerts. Four conversion modes,
-        162 fiat currencies, and HMAC-verified alert tokens — React 19 front end on a
-        Flask + PostgreSQL back end, fully dockerised.</p>
-      <div class="links">
-        <a href="https://vexlconverter.vercel.app/">live</a>
-        <a href="https://github.com/PeterXMR/vexlconverter">repo</a>
-      </div>
-    </article>
-
-    <article class="project">
-      <h2><span class="dir">./</span>spotprice</h2>
-      <div class="tags"># rust · kotlin-multiplatform · bitcoin</div>
-      <p class="desc">A client-only sats price ticker and sats ↔ fiat converter for Android
-        and iOS — no backend, everything runs on the device. A Rust core aggregates prices
-        across multiple exchanges (median + σ-rejection) behind a single UniFFI surface;
-        the UI is Kotlin Multiplatform with Compose.</p>
-      <div class="links">
-        <a href="https://github.com/PeterXMR/spotprice">repo</a>
-      </div>
-    </article>
+  <div class="terminal">
+    <div class="titlebar">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="title">peter@github: ~</span>
     </div>
-  </main>
 
-  <footer>
-    <div class="prompt"><span class="cmd">cat contact.txt</span></div>
-    <p><a href="https://github.com/PeterXMR">github.com/PeterXMR</a><span class="cursor"></span></p>
-  </footer>
+    <div class="screen">
+      <div class="block">
+        <div class="line"><span class="p">peter@github:~$ </span><span class="c">whoami</span></div>
+        <div class="out name">PeterXMR</div>
+      </div>
+
+      <div class="block">
+        <div class="line"><span class="p">peter@github:~$ </span><span class="c">cat about.txt</span></div>
+        <div class="out">Freedom lover who loves to write code.</div>
+      </div>
+
+      <div class="block">
+        <div class="line"><span class="p">peter@github:~$ </span><span class="c">ls ~/projects</span></div>
+        <div class="out">rustscreen  freellmapiphone  vexlconverter  spotprice</div>
+      </div>
+
+      <div class="block">
+        <div class="line"><span class="p">peter@github:~/projects$ </span><span class="c">cat rustscreen.txt</span></div>
+        <div class="out tags"># rust · macos · android · usb-c</div>
+        <div class="out">Turns a Google Pixel 6a into a wired USB-C, touch-capable second monitor for an M1 MacBook — both halves written in Rust. The Mac hardware-encodes a virtual display to H.264, streams it over a single cable, and the phone decodes it; touches travel back as mouse events. ~34 ms glass-to-glass latency.</div>
+        <div class="out link"><span class="arrow">→ repo:  </span><a href="https://github.com/PeterXMR/rustscreen">github.com/PeterXMR/rustscreen</a></div>
+      </div>
+
+      <div class="block">
+        <div class="line"><span class="p">peter@github:~/projects$ </span><span class="c">cat freellmapiphone.txt</span></div>
+        <div class="out tags"># react-native · expo · llm · android</div>
+        <div class="out">An Android app (React Native / Expo) that runs an OpenAI-compatible multi-provider LLM router in-process on the device — no server. Add your free-tier provider keys and it routes requests and fails over across providers, with keys stored in the Android Keystore.</div>
+        <div class="out link"><span class="arrow">→ repo:  </span><a href="https://github.com/PeterXMR/freellmapiphone">github.com/PeterXMR/freellmapiphone</a></div>
+      </div>
+
+      <div class="block">
+        <div class="line"><span class="p">peter@github:~/projects$ </span><span class="c">cat vexlconverter.txt</span></div>
+        <div class="out tags"># python · react · postgres · crypto</div>
+        <div class="out">A fiat &amp; cryptocurrency conversion platform with live prices, historical charts, and user-configurable price alerts. Four conversion modes, 162 fiat currencies, and HMAC-verified alert tokens — React 19 front end on a Flask + PostgreSQL back end, fully dockerised.</div>
+        <div class="out link"><span class="arrow">→ live:  </span><a href="https://vexlconverter.vercel.app/">vexlconverter.vercel.app</a></div>
+        <div class="out link"><span class="arrow">→ repo:  </span><a href="https://github.com/PeterXMR/vexlconverter">github.com/PeterXMR/vexlconverter</a></div>
+      </div>
+
+      <div class="block">
+        <div class="line"><span class="p">peter@github:~/projects$ </span><span class="c">cat spotprice.txt</span></div>
+        <div class="out tags"># rust · kotlin-multiplatform · bitcoin</div>
+        <div class="out">A client-only sats price ticker and sats ↔ fiat converter for Android and iOS — no backend, everything runs on the device. A Rust core aggregates prices across multiple exchanges (median + σ-rejection) behind a single UniFFI surface; the UI is Kotlin Multiplatform with Compose.</div>
+        <div class="out link"><span class="arrow">→ repo:  </span><a href="https://github.com/PeterXMR/spotprice">github.com/PeterXMR/spotprice</a></div>
+      </div>
+
+      <div class="gap"></div>
+
+      <div class="block">
+        <div class="line"><span class="p">peter@github:~$ </span><span class="c">cat contact.txt</span></div>
+        <div class="out link"><span class="arrow">→ </span><a href="https://github.com/PeterXMR">github.com/PeterXMR</a></div>
+      </div>
+
+      <div class="line"><span class="p">peter@github:~$ </span><span class="cursor"></span></div>
+    </div>
+  </div>
 </body>
 </html>
