@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>peter@github:~$ ls ~/projects</title>
+  <meta name="description" content="Hobby projects by PeterXMR — Rust, mobile, and crypto tooling." />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --fg: #00ff41;
+      --dim: #1f8a36;
+      --muted: #0f5d24;
+      --accent: #7dffa0;
+      --border: #123d1c;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); }
+    body {
+      color: var(--fg);
+      font-family: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 2rem 1rem 4rem;
+      max-width: 880px;
+      margin: 0 auto;
+      text-shadow: 0 0 2px rgba(0, 255, 65, 0.35);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .prompt { color: var(--dim); }
+    .prompt::before { content: "peter@github:~$ "; color: var(--muted); }
+    .cmd { color: var(--fg); }
+    .comment { color: var(--muted); }
+
+    header { margin-bottom: 2.5rem; }
+    h1 {
+      font-size: 1.05rem;
+      font-weight: normal;
+      margin: 0.4rem 0 0;
+      color: var(--fg);
+      white-space: pre;
+    }
+    .intro { margin: 0.8rem 0 0; color: var(--dim); }
+
+    .section-label { margin: 2.4rem 0 1rem; }
+
+    .project {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.2rem;
+      margin: 0 0 1.1rem;
+      background: rgba(0, 255, 65, 0.02);
+    }
+    .project:hover { border-color: var(--dim); }
+    .project h2 {
+      font-size: 1rem;
+      margin: 0 0 0.5rem;
+      font-weight: normal;
+    }
+    .project h2 .dir { color: var(--accent); }
+    .tags { color: var(--muted); font-size: 0.82rem; }
+    .desc { color: var(--dim); margin: 0.55rem 0 0.8rem; }
+    .links a { margin-right: 1.1rem; font-size: 0.88rem; }
+    .links a::before { content: "["; color: var(--muted); }
+    .links a::after { content: "]"; color: var(--muted); }
+
+    footer { margin-top: 3rem; color: var(--muted); font-size: 0.85rem; }
+    .cursor {
+      display: inline-block;
+      width: 0.6em;
+      height: 1.05em;
+      background: var(--fg);
+      vertical-align: text-bottom;
+      animation: blink 1s steps(2, start) infinite;
+      box-shadow: 0 0 6px rgba(0, 255, 65, 0.7);
+    }
+    @keyframes blink { to { visibility: hidden; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cursor { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="prompt"><span class="cmd">whoami</span></div>
+    <h1>PeterXMR</h1>
+    <p class="intro">Hobby developer. Rust, mobile, and Bitcoin/crypto tooling.
+      I build things that run close to the metal and own their own stack.</p>
+  </header>
+
+  <main>
+    <div class="prompt section-label"><span class="cmd">ls ~/projects</span></div>
+
+    <article class="project">
+      <h2><span class="dir">./</span>rustscreen</h2>
+      <div class="tags"># rust · macos · android · usb-c</div>
+      <p class="desc">Turns a Google Pixel 6a into a wired USB-C, touch-capable second
+        monitor for an M1 MacBook — both halves written in Rust. The Mac hardware-encodes
+        a virtual display to H.264, streams it over a single cable, and the phone decodes
+        it; touches travel back as mouse events. ~34 ms glass-to-glass latency.</p>
+      <div class="links">
+        <a href="https://github.com/PeterXMR/rustscreen">repo</a>
+      </div>
+    </article>
+
+    <article class="project">
+      <h2><span class="dir">./</span>freellmapiphone</h2>
+      <div class="tags"># react-native · expo · llm · android</div>
+      <p class="desc">An Android app (React Native / Expo) that runs an OpenAI-compatible
+        multi-provider LLM router <em>in-process on the device</em> — no server. Add your
+        free-tier provider keys and it routes requests and fails over across providers,
+        with keys stored in the Android Keystore.</p>
+      <div class="links">
+        <a href="https://github.com/PeterXMR/freellmapiphone">repo</a>
+      </div>
+    </article>
+
+    <article class="project">
+      <h2><span class="dir">./</span>vexlconverter</h2>
+      <div class="tags"># python · react · postgres · crypto</div>
+      <p class="desc">A fiat &amp; cryptocurrency conversion platform with live prices,
+        historical charts, and user-configurable price alerts. Four conversion modes,
+        162 fiat currencies, and HMAC-verified alert tokens — React 19 front end on a
+        Flask + PostgreSQL back end, fully dockerised.</p>
+      <div class="links">
+        <a href="https://vexlconverter.vercel.app/">live</a>
+        <a href="https://github.com/PeterXMR/vexlconverter">repo</a>
+      </div>
+    </article>
+
+    <article class="project">
+      <h2><span class="dir">./</span>spotprice</h2>
+      <div class="tags"># rust · kotlin-multiplatform · bitcoin</div>
+      <p class="desc">A client-only sats price ticker and sats ↔ fiat converter for Android
+        and iOS — no backend, everything runs on the device. A Rust core aggregates prices
+        across multiple exchanges (median + σ-rejection) behind a single UniFFI surface;
+        the UI is Kotlin Multiplatform with Compose.</p>
+      <div class="links">
+        <a href="https://github.com/PeterXMR/spotprice">repo</a>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="prompt"><span class="cmd">cat contact.txt</span></div>
+    <p><a href="https://github.com/PeterXMR">github.com/PeterXMR</a><span class="cursor"></span></p>
+  </footer>
+</body>
+</html>
