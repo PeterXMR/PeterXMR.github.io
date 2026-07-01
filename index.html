@@ -22,19 +22,18 @@
       font-family: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
       font-size: 15px;
       line-height: 1.55;
-      padding: 1.4rem;
+      padding: 0;
       min-height: 100vh;
     }
 
-    /* terminal window */
+    /* terminal window — full-bleed, edge to edge */
     .terminal {
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      border: none;
+      border-radius: 0;
       overflow: hidden;
-      min-height: calc(100vh - 2.8rem);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 0 40px rgba(0, 255, 65, 0.06);
     }
     .titlebar {
       background: var(--bar);
@@ -73,9 +72,8 @@
     .out { color: var(--dim); margin: 0.15rem 0 0; white-space: pre-wrap; }
     .out.tags { color: var(--muted); font-size: 0.86rem; margin-top: 0.35rem; }
     .out.name { color: var(--fg); }
-    .block { margin: 0 0 1.9rem; }
-    .block:last-of-type { margin-bottom: 0.6rem; }
-    .gap { height: 1.6rem; }
+    .block { margin: 0 0 0.4rem; }
+    .block:last-of-type { margin-bottom: 0.4rem; }
 
     a {
       color: var(--accent);
@@ -153,8 +151,6 @@
         <div class="out">A client-only sats price ticker and sats ↔ fiat converter for Android and iOS — no backend, everything runs on the device. A Rust core aggregates prices across multiple exchanges (median + σ-rejection) behind a single UniFFI surface; the UI is Kotlin Multiplatform with Compose.</div>
         <div class="out link"><span class="arrow">→ repo:  </span><a href="https://github.com/PeterXMR/spotprice">github.com/PeterXMR/spotprice</a></div>
       </div>
-
-      <div class="gap"></div>
 
       <div class="block">
         <div class="line"><span class="p">peter@github:~$ </span><span class="c">cat contact.txt</span></div>
