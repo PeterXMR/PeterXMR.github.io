@@ -35,26 +35,6 @@
       display: flex;
       flex-direction: column;
     }
-    .titlebar {
-      background: var(--bar);
-      border-bottom: 1px solid var(--border);
-      padding: 0.55rem 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-    }
-    .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-    .dot.red { background: #ff5f56; }
-    .dot.yellow { background: #ffbd2e; }
-    .dot.green { background: #27c93f; }
-    .titlebar .title {
-      flex: 1;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.82rem;
-      margin-right: 2.4rem; /* balance the dots so title is centered */
-    }
-
     .screen {
       background: var(--screen);
       color: var(--fg);
@@ -69,7 +49,7 @@
     .line .c { color: var(--fg); }          /* the typed command */
 
     /* command output: indented under nothing — flush left like a real shell */
-    .out { color: var(--dim); margin: 0.15rem 0 0; white-space: pre-wrap; }
+    .out { color: var(--dim); margin: 0.15rem 0 0; padding-left: 2rem; white-space: pre-wrap; }
     .out.tags { color: var(--muted); font-size: 0.86rem; margin-top: 0.35rem; }
     .out.name { color: var(--fg); }
     .block { margin: 0 0 0.4rem; }
@@ -100,13 +80,6 @@
 </head>
 <body>
   <div class="terminal">
-    <div class="titlebar">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-      <span class="title">peter@github: ~</span>
-    </div>
-
     <div class="screen">
       <div class="block">
         <div class="line"><span class="p">peter@github:~$ </span><span class="c">whoami &amp;&amp; cat about.txt</span></div>
