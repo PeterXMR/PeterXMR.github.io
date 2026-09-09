@@ -24,7 +24,7 @@
   .tag { position:absolute; top:-14px; left:20px; background:#020a04; padding:0 8px; color:#00ff41; }
 
   .whoami { padding:14px 18px; }
-  .whoami-inner { display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .whoami-inner { display:flex; flex-direction:column; align-items:flex-start; gap:14px; }
   .logo { position:relative; display:inline-block; flex-shrink:0; }
   .logo .shadow { position:absolute; left:6px; top:6px; }
   .logo .face { position:relative; filter:drop-shadow(0 0 6px rgba(0,255,65,.45)); }
@@ -73,6 +73,9 @@
   .btn { background:#00ff41; color:#020a04; border:0; padding:2px 22px; cursor:pointer; }
   .btn.ghost { background:none; color:#9cff9c; border:2px solid #00ff41; padding:0 22px; }
   .dialog-actions { display:flex; justify-content:flex-end; margin-top:18px; }
+
+  .logout { min-height:100vh; box-sizing:border-box; padding:18px 16px; line-height:1.4; }
+  .logout .cursor { animation:blink 1s steps(1) infinite; }
 </style>
 </head>
 <body>
@@ -147,12 +150,21 @@
           <button class="btn" id="quit-yes">[ Yes ]</button>
           <button class="btn ghost" data-close>[ No ]</button>
         </div>
-        <div class="muted" style="margin-top:14px; font-size:18px;" id="quit-note"></div>
       </div>
 
       <div class="dialog-actions" id="ok-row"><button class="btn" data-close>[ OK ]</button></div>
     </div>
   </div>
+</div>
+
+<div class="logout" id="logout" hidden>
+  <div>$ exit</div>
+  <div>logout</div>
+  <div class="muted">Saving session... completed.</div>
+  <div>&nbsp;</div>
+  <div>[Process completed]</div>
+  <div class="muted">The browser did not allow this page to close its own tab — press ⌘W / Ctrl+W to close it.</div>
+  <div><span class="cursor">█</span></div>
 </div>
 
 <script>
@@ -215,7 +227,7 @@ function render() {
     $('r-repo').href = cur.repo; $('r-repo').textContent = strip(cur.repo);
   }
 }
-function setMode(m) { mode = m; if (m === 'quit') $('quit-note').textContent = ''; render(); }
+function setMode(m) { mode = m; render(); }
 function flash(msg) { $('toast').textContent = msg; clearTimeout(tt); tt = setTimeout(() => $('toast').textContent = '', 2200); }
 function copyClone() {
   const url = PROJECTS[sel].repo + '.git';
@@ -225,21 +237,28 @@ function copyClone() {
 function openGithub() { window.open(PROJECTS[sel].repo, '_blank', 'noopener'); }
 function quitYes() {
   window.close();
-  setTimeout(() => { if (!window.closed) $('quit-note').textContent = 'Browser refused to close this tab (it was not opened by a script). Close it manually — or press No to stay.'; }, 150);
+  setTimeout(() => { if (!window.closed) showLogout(); }, 150);
+}
+function showLogout() {
+  document.removeEventListener('click', onClick);
+  window.removeEventListener('keydown', onKey);
+  document.querySelector('.app').remove();
+  $('logout').hidden = false;
+  document.title = 'logout';
 }
 
-document.addEventListener('click', e => {
+function onClick(e) {
   const row = e.target.closest('[data-i]'); if (row) { sel = +row.dataset.i; render(); return; }
   const fk = e.target.closest('.fkey');
   if (fk) { const a = fk.dataset.act; if (a === 'clone') copyClone(); else if (a === 'github') openGithub(); else setMode(a); return; }
   if (e.target.closest('[data-close]')) { e.target.blur(); setMode(null); return; }
   if (e.target.id === 'quit-yes') { quitYes(); return; }
   if (e.target.id === 'overlay') setMode(null);
-});
-window.addEventListener('keydown', e => {
+}
+function onKey(e) {
   const k = e.key;
   if (k === 'F1') { e.preventDefault(); setMode('help'); }
-  else if (k === 'Enter' && mode) { e.preventDefault(); if (e.target.blur) e.target.blur(); setMode(null); }
+  else if (k === 'Enter' && mode) { if (e.target.tagName === 'BUTTON' && e.target.closest('#dialog')) return; e.preventDefault(); if (e.target.blur) e.target.blur(); setMode(null); }
   else if (k === 'F3' || k === 'Enter') { if (k === 'Enter' && e.target.tagName === 'BUTTON') return; e.preventDefault(); setMode('readme'); }
   else if (k === 'F5') { e.preventDefault(); copyClone(); }
   else if (k === 'F9') { e.preventDefault(); openGithub(); }
@@ -249,7 +268,9 @@ window.addEventListener('keydown', e => {
   else if (k === 'ArrowUp' || k === 'k') { e.preventDefault(); sel = (sel + PROJECTS.length - 1) % PROJECTS.length; render(); }
   else if (mode === 'quit' && (k === 'y' || k === 'Y')) quitYes();
   else if (mode === 'quit' && (k === 'n' || k === 'N')) setMode(null);
-});
+}
+document.addEventListener('click', onClick);
+window.addEventListener('keydown', onKey);
 render();
 </script>
 </body>
